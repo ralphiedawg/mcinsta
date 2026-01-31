@@ -90,7 +90,7 @@ class Instance:
         else: 
             print("Operation Cancelled")
 
-    def save_to_json(self):
+    def save_to_json(self, mods_folder=None):
         jason = {}
         if os.path.exists("instances.json"):
             with open("instances.json", "r") as file:
@@ -100,6 +100,8 @@ class Instance:
             'path': self.path,
             'index':self.index,
         }
+        if mods_folder:
+            jason['mods_folder'] = mods_folder
         with open("instances.json", "w") as file:
             json.dump(jason, file, indent=4)
 

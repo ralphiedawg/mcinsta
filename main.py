@@ -20,6 +20,14 @@ instances = Instance.Instance.load_from_json()
 selected_instance = None
 mods_folder = input("Enter the path to your mods folder: ")
 
+if os.path.exists("instances.json"):
+    with open("instances.json", "r") as file:
+        data = json.load(file)
+        if 'mods_folder' in data:
+            mods_folder = data['mods_folder']
+
+instances[list(instances.keys())[0]].save_to_json(mods_folder) if instances else None
+
 while True:
     selected_text = selected_instance if selected_instance else "None"
     print(f"\nThe currently selected instance is: {selected_text}")
