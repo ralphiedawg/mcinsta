@@ -32,8 +32,18 @@ if os.path.exists("instances.json"):
 
 if not mods_folder:
     mods_folder = input("Enter the path to your mods folder: ")
-    if instances:
-        instances[list(instances.keys())[0]].save_to_json(mods_folder)
+
+def save_config(instance_name=None):
+    if os.path.exists("instances.json"):
+        with open("instances.json", "r") as file:
+            data = json.load(file)
+        data['mods_folder'] = mods_folder
+        if instance_name:
+            data['selected_instance'] = instance_name
+        with open("instances.json", "w") as file:
+            json.dump(data, file, indent=4)
+
+save_config()
 
 while True:
     selected_text = selected_instance if selected_instance else "None"
@@ -63,6 +73,7 @@ while True:
         version = input("Game version: ")
         inst = Instance.Instance(path, name, version)
         instances[name] = inst
+        save_config()
         print(f"Created instance '{name}'")
     
     elif action == "3":
@@ -105,14 +116,7 @@ while True:
                     selected_instance = instance_list[idx]
                     selected_inst = instances[selected_instance]
                     selected_inst.move(mods_folder)
-                    
-                    if os.path.exists("instances.json"):
-                        with open("instances.json", "r") as file:
-                            data = json.load(file)
-                        data['selected_instance'] = selected_instance
-                        with open("instances.json", "w") as file:
-                            json.dump(data, file, indent=4)
-                    
+                    save_config(selected_instance)
                     print(f"Selected and moved mods to '{selected_instance}'")
                 else:
                     print("Invalid selection.")

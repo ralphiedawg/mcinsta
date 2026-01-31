@@ -11,7 +11,9 @@ class Instance:
         if os.path.exists("instances.json"):
             with open("instances.json", "r") as file:
                 data = json.load(file)
-                cls.numInstances = max((info.get('index', 0) for info in data.values()), default=0)
+                cls.numInstances = max((info.get('index', 0) for name, info in data.items() 
+                                       if name not in ('mods_folder', 'selected_instance') and isinstance(info, dict)), 
+                                      default=0)
     
     @classmethod
     def load_from_json(cls):
@@ -21,6 +23,8 @@ class Instance:
                 data = json.load(file)
             
             for name, info in data.items():
+                if name in ('mods_folder', 'selected_instance'):
+                    continue
                 instance = cls.__new__(cls)
                 instance.name = name
                 instance.version = info['version']
