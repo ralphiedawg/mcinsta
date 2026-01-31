@@ -28,12 +28,15 @@ class Instance:
         current = self.path
         new = newLoc
 
-        newDir = os.path.dirname(new)
-        if not os.path.exists(newDir):
-            os.makedirs(newDir)
+        if not os.path.exists(new):
+            os.makedirs(new)
 
-        shutil.move(current, new)
-        print(f'Successfully moved {current} to {new}')
+        for item in os.listdir(current):
+            src = os.path.join(current, item)
+            dst = os.path.join(new, item)
+            shutil.move(src, dst)
+        
+        print(f'Successfully moved contents from {current} to {new}')
 
     def delete_instance(self, instancePath):
         sure = input(f"Are you sure you'd like to delete the instance at path {instancePath}? (y/n): ")
