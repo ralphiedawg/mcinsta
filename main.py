@@ -1,4 +1,6 @@
 import Instance
+import os
+import json
 
 try: 
     import cfonts
@@ -18,15 +20,20 @@ print("a simple modded minecraft instance manager")
 
 instances = Instance.Instance.load_from_json()
 selected_instance = None
-mods_folder = input("Enter the path to your mods folder: ")
+mods_folder = None
 
 if os.path.exists("instances.json"):
     with open("instances.json", "r") as file:
         data = json.load(file)
         if 'mods_folder' in data:
             mods_folder = data['mods_folder']
+        if 'selected_instance' in data:
+            selected_instance = data['selected_instance']
 
-instances[list(instances.keys())[0]].save_to_json(mods_folder) if instances else None
+if not mods_folder:
+    mods_folder = input("Enter the path to your mods folder: ")
+    if instances:
+        instances[list(instances.keys())[0]].save_to_json(mods_folder)
 
 while True:
     selected_text = selected_instance if selected_instance else "None"
@@ -98,6 +105,14 @@ while True:
                     selected_instance = instance_list[idx]
                     selected_inst = instances[selected_instance]
                     selected_inst.move(mods_folder)
+                    
+                    if os.path.exists("instances.json"):
+                        with open("instances.json", "r") as file:
+                            data = json.load(file)
+                        data['selected_instance'] = selected_instance
+                        with open("instances.json", "w") as file:
+                            json.dump(data, file, indent=4)
+                    
                     print(f"Selected and moved mods to '{selected_instance}'")
                 else:
                     print("Invalid selection.")
