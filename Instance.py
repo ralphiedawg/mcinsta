@@ -13,6 +13,24 @@ class Instance:
                 data = json.load(file)
                 cls.numInstances = max((info.get('index', 0) for info in data.values()), default=0)
     
+    @classmethod
+    def load_from_json(cls):
+        instances = {}
+        if os.path.exists("instances.json"):
+            with open("instances.json", "r") as file:
+                data = json.load(file)
+            
+            for name, info in data.items():
+                instance = cls.__new__(cls)
+                instance.name = name
+                instance.version = info['version']
+                instance.path = info['path']
+                instance.index = info['index']
+                cls.numInstances = max(cls.numInstances, instance.index)
+                instances[name] = instance
+        
+        return instances
+    
     def __init__(self, given_path, given_name, game_version):
         Instance._load_instance_count()
         Instance.numInstances += 1 
