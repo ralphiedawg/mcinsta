@@ -74,6 +74,11 @@ while True:
     
     elif action == "5":
         if instances:
+            if selected_instance:
+                old_inst = instances[selected_instance]
+                old_inst.move(old_inst.path)
+                print(f"Moved mods back to '{selected_instance}'")
+            
             print("\nInstances:")
             for i, name in enumerate(instances.keys(), 1):
                 print(f"  ({i}) {name} (v{instances[name].version})")
