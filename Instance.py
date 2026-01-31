@@ -5,7 +5,16 @@ import json
 
 class Instance:
     numInstances = 0
+    
+    @classmethod
+    def _load_instance_count(cls):
+        if os.path.exists("instances.json"):
+            with open("instances.json", "r") as file:
+                data = json.load(file)
+                cls.numInstances = max((info.get('index', 0) for info in data.values()), default=0)
+    
     def __init__(self, given_path, given_name, game_version):
+        Instance._load_instance_count()
         Instance.numInstances += 1 
         self.version = game_version
 
@@ -16,6 +25,7 @@ class Instance:
             print('That path does not in fact exist.')
             sys.exit()
         self.name = given_name
+        self.save_to_json()
 
 
     def totalInstances(self):
@@ -36,25 +46,45 @@ class Instance:
             dst = os.path.join(new, item)
             shutil.move(src, dst)
         
+        self.path = new
+        self.save_to_json()
         print(f'Successfully moved contents from {current} to {new}')
 
     def delete_instance(self, instancePath):
         sure = input(f"Are you sure you'd like to delete the instance at path {instancePath}? (y/n): ")
         if sure == "y":
             shutil.rmtree(instancePath)
-            print(f"Removed the intance at path {instancePath}")
+            
+            # Remove from JSON
+            if os.path.exists("instances.json"):
+                with open("instances.json", "r") as file:
+                    data = json.load(file)
+                
+                for name, info in list(data.items()):
+                    if info['path'] == instancePath:
+                        del data[name]
+                        break
+                
+                with open("instances.json", "w") as file:
+                    json.dump(data, file, indent=4)
+            
+            print(f"Removed the instance at path {instancePath}")
         else: 
             print("Operation Cancelled")
 
     def save_to_json(self):
-        jason = {
-            'name': self.name,
+        jason = {}
+        if os.path.exists("instances.json"):
+            with open("instances.json", "r") as file:
+                jason = json.load(file)
+        jason[self.name] = {
             'version': self.version,
             'path': self.path,
-            'index': self.getIndex()
+            'index':self.index,
         }
-        with open ("instances.json","w") as file:
-            json.dump(jason, file, indent = 4)
+        with open("instances.json", "w") as file:
+            json.dump(jason, file, indent=4)
+
 
 if __name__ == "__main__":
     print("Built by a human: RalphieDawg")

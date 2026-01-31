@@ -1,0 +1,12 @@
+{
+    "balls": {
+        "version": "1.11",
+        "path": "/Users/ralph/Desktop/projects/mcinsta/trois",
+        "index": 1
+    },
+    "ha": {
+        "version": "1.12",
+        "path": "/Users/ralph/Desktop/projects/mcinsta/instance2",
+        "index": 2
+    }
+}
